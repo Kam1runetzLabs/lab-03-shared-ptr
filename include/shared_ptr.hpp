@@ -1,7 +1,7 @@
 // Copyright 2020 Kam1runetzLabs <notsoserious2017@gmail.com>
 
-#ifndef INCLUDE_HEADER_HPP_
-#define INCLUDE_HEADER_HPP_
+#ifndef INCLUDE_SHARED_PTR_HPP_
+#define INCLUDE_SHARED_PTR_HPP_
 
 #include <atomic>
 #include <utility>
@@ -138,4 +138,4 @@ auto shared_ptr<T>::use_count() const -> std::size_t {
   return _counter ? (unsigned int)(*_counter) : 0;
 }
 
-#endif  // INCLUDE_HEADER_HPP_
+#endif  // INCLUDE_SHARED_PTR_HPP_
