@@ -70,7 +70,7 @@ TEST(DefaultFeatures, Scopes) {
 
 TEST(ThreadSafety, MultiThreading) {
   std::vector<std::thread> threads;
-  volatile bool stopped = false;
+  std::atomic_bool stopped = false;
   shared_ptr<int> base_ptr(new int(123));
 
   for (std::size_t i = 0; i < std::thread::hardware_concurrency(); ++i) {
@@ -85,7 +85,7 @@ TEST(ThreadSafety, MultiThreading) {
   ASSERT_EQ(std::thread::hardware_concurrency() + 1, base_ptr.use_count());
   stopped = true;
   for (auto &thread : threads) {
-    thread.join();
+    if (thread.joinable()) thread.join();
   }
   ASSERT_EQ(base_ptr.use_count(), 1);
 }
