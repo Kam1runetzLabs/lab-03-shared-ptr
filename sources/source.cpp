@@ -1,3 +1,1 @@
-// Copyright 2018 Your Name <your_email>
-
-#include <header.hpp>
+// Copyright 2020 Kam1runetzLabs <notsoserious2017@gmail.com>
