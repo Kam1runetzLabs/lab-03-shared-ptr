@@ -30,8 +30,8 @@ find_package(GTest CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 
 add_library(shared_ptr STATIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
-        include/shared_ptr.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/sources/shared_ptr.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/shared_ptr.hpp)
 add_executable(tests
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
         )
