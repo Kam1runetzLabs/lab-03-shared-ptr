@@ -23,7 +23,7 @@ TEST(DefaultFeatures, CopyingConstructor) {
 
 TEST(DefaultFeatures, MovingConstructor) {
   shared_ptr<int> ptr1(new int(123));
-
+  static_assert(std::is_move_constructible_v<int>, "not move constructable");
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
 
@@ -42,9 +42,15 @@ TEST(DefaultFeatures, CopyingAssignable) {
   EXPECT_EQ(ptr1.get(), ptr2.get());
 }
 
-TEST(DefaultFeatures, MovingAssignable) {
-  shared_ptr<int> ptr1(new int(123));
+//class some_class {
+// public:
+//  some_class(some_class &&) = delete;
+//};
 
+TEST(DefaultFeatures, MovingAssignable) {
+  static_assert(std::is_move_assignable_v<int>, "not move assignable");
+//  static_assert(std::is_move_assignable_v<some_class>, "not move assignable");
+  shared_ptr<int> ptr1(new int(123));
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
 
