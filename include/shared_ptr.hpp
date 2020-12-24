@@ -76,12 +76,9 @@ auto shared_ptr<T>::operator=(const shared_ptr &r) -> shared_ptr & {
 template <class T>
 auto shared_ptr<T>::operator=(shared_ptr &&r) noexcept -> shared_ptr & {
   if (r == *this) return *this;
-
   reset();
-
   _counter = r.counter;
   _data = r._data;
-
   r._counter = nullptr;
   r._data = nullptr;
   return *this;

@@ -5,7 +5,6 @@
 #include <chrono>
 #include <shared_ptr.hpp>
 #include <thread>
-#include <type_traits>
 #include <utility>
 
 TEST(DefaultFeatures, DefaultConstructor) {
@@ -24,7 +23,6 @@ TEST(DefaultFeatures, CopyingConstructor) {
 
 TEST(DefaultFeatures, MovingConstructor) {
   shared_ptr<int> ptr1(new int(123));
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<int>>::value);
 
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
@@ -46,7 +44,6 @@ TEST(DefaultFeatures, CopyingAssignable) {
 
 TEST(DefaultFeatures, MovingAssignable) {
   shared_ptr<int> ptr1(new int(123));
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<int>>::value);
 
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
