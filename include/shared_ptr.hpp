@@ -48,12 +48,10 @@ shared_ptr<T>::shared_ptr(const shared_ptr &r)
 }
 
 template <class T>
-shared_ptr<T>::shared_ptr(shared_ptr &&rr) noexcept {
-  _data = rr._data;
-  _counter = rr._counter;
-
-  rr._data = nullptr;
-  rr._counter = nullptr;
+shared_ptr<T>::shared_ptr(shared_ptr &&rr) noexcept
+    : _data(nullptr), _counter(nullptr) {
+  std::swap(_data, rr._data);
+  std::swap(_counter, rr._counter);
 }
 
 template <class T>
@@ -135,7 +133,7 @@ void shared_ptr<T>::swap(shared_ptr &r) {
 
 template <class T>
 auto shared_ptr<T>::use_count() const -> std::size_t {
-  return _counter ? (unsigned int)(*_counter) : 0;
+  return _counter ? static_cast<unsigned int>(*_counter) : 0;
 }
 
 #endif  // INCLUDE_SHARED_PTR_HPP_

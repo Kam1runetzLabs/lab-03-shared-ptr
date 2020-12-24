@@ -5,67 +5,69 @@
 #include <chrono>
 #include <shared_ptr.hpp>
 #include <thread>
+#include <type_traits>
 #include <utility>
 
-TEST(DefaultFeatures, Constructor) {
+TEST(DefaultFeatures, DefaultConstructor) {
   shared_ptr<int> ptr;
   auto count = ptr.use_count();
-  auto object = ptr.get();
-  ASSERT_EQ(count, 0);
-  ASSERT_EQ(object, nullptr);
+  EXPECT_EQ(count, 0);
+  EXPECT_FALSE(ptr);
 }
 
 TEST(DefaultFeatures, CopyingConstructor) {
   shared_ptr<int> ptr1(new int(123));
   shared_ptr<int> ptr2(ptr1);
-  ASSERT_EQ(ptr1.use_count(), ptr2.use_count());
-  ASSERT_EQ(ptr1.get(), ptr2.get());
+  EXPECT_EQ(ptr1.use_count(), ptr2.use_count());
+  EXPECT_EQ(ptr1.get(), ptr2.get());
 }
 
 TEST(DefaultFeatures, MovingConstructor) {
   shared_ptr<int> ptr1(new int(123));
+  EXPECT_TRUE(std::is_move_constructible<shared_ptr<int>>::value);
 
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
 
   shared_ptr<int> ptr2(std::move(ptr1));
-  ASSERT_EQ(ptr1.get(), nullptr);
-  ASSERT_EQ(ptr1.use_count(), 0);
+  EXPECT_FALSE(ptr1);
+  EXPECT_EQ(ptr1.use_count(), 0);
 
-  ASSERT_EQ(ptr2.get(), ptr1_obj);
-  ASSERT_EQ(ptr2.use_count(), ptr1_use_count);
+  EXPECT_EQ(ptr2.get(), ptr1_obj);
+  EXPECT_EQ(ptr2.use_count(), ptr1_use_count);
 }
 
-TEST(DefaultFeatures, CopyingOperator) {
+TEST(DefaultFeatures, CopyingAssignable) {
   shared_ptr<int> ptr1(new int(123));
   auto ptr2 = ptr1;
-  ASSERT_EQ(ptr1.use_count(), ptr2.use_count());
-  ASSERT_EQ(ptr1.get(), ptr2.get());
+  EXPECT_EQ(ptr1.use_count(), ptr2.use_count());
+  EXPECT_EQ(ptr1.get(), ptr2.get());
 }
 
-TEST(DefaultFeatures, MovingOperator) {
+TEST(DefaultFeatures, MovingAssignable) {
   shared_ptr<int> ptr1(new int(123));
+  EXPECT_TRUE(std::is_move_assignable<shared_ptr<int>>::value);
 
   auto ptr1_obj = ptr1.get();
   auto ptr1_use_count = ptr1.use_count();
 
   auto ptr2 = std::move(ptr1);
-  ASSERT_EQ(ptr1.get(), nullptr);
-  ASSERT_EQ(ptr1.use_count(), 0);
+  EXPECT_FALSE(ptr1);
+  EXPECT_EQ(ptr1.use_count(), 0);
 
-  ASSERT_EQ(ptr2.get(), ptr1_obj);
-  ASSERT_EQ(ptr2.use_count(), ptr1_use_count);
+  EXPECT_EQ(ptr2.get(), ptr1_obj);
+  EXPECT_EQ(ptr2.use_count(), ptr1_use_count);
 }
 
 TEST(DefaultFeatures, Scopes) {
   shared_ptr<int> ptr1(new int(123));
   {
     auto ptr2 = ptr1;
-    ASSERT_EQ(ptr2.use_count(), 2);
-    ASSERT_EQ(ptr1.use_count(), 2);
-    ASSERT_EQ(ptr1.get(), ptr2.get());
+    EXPECT_EQ(ptr2.use_count(), 2);
+    EXPECT_EQ(ptr1.use_count(), 2);
+    EXPECT_EQ(ptr1.get(), ptr2.get());
   }
-  ASSERT_EQ(ptr1.use_count(), 1);
+  EXPECT_EQ(ptr1.use_count(), 1);
 }
 
 TEST(ThreadSafety, MultiThreading) {
@@ -75,17 +77,17 @@ TEST(ThreadSafety, MultiThreading) {
 
   for (std::size_t i = 0; i < std::thread::hardware_concurrency(); ++i) {
     threads.emplace_back([&] {
-      auto ptr = base_ptr;
+      [[maybe_unused]] auto ptr = base_ptr;
       while (!stopped) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
       }
     });
   }
   std::this_thread::sleep_for(std::chrono::seconds(5));
-  ASSERT_EQ(std::thread::hardware_concurrency() + 1, base_ptr.use_count());
+  EXPECT_EQ(std::thread::hardware_concurrency() + 1, base_ptr.use_count());
   stopped = true;
   for (auto &thread : threads) {
-    if (thread.joinable()) thread.join();
+    thread.join();
   }
-  ASSERT_EQ(base_ptr.use_count(), 1);
+  EXPECT_EQ(base_ptr.use_count(), 1);
 }
