@@ -39,7 +39,9 @@ shared_ptr<T>::shared_ptr() : _data(nullptr), _counter(nullptr) {}
 
 template <class T>
 shared_ptr<T>::shared_ptr(T *ptr)
-    : _data(ptr), _counter(new std::atomic_uint(1)) {}
+    : _data(ptr), _counter(new std::atomic_uint(1)) {
+  if (!ptr) _counter = nullptr;
+}
 
 template <class T>
 shared_ptr<T>::shared_ptr(const shared_ptr &r)
