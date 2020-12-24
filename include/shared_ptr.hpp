@@ -50,6 +50,7 @@ shared_ptr<T>::shared_ptr(const shared_ptr &r)
 template <class T>
 shared_ptr<T>::shared_ptr(shared_ptr &&rr) noexcept
     : _data(nullptr), _counter(nullptr) {
+  static_assert(std::is_move_constructible_v<T>, "not move constructable");
   std::swap(_data, rr._data);
   std::swap(_counter, rr._counter);
 }
@@ -75,6 +76,7 @@ auto shared_ptr<T>::operator=(const shared_ptr &r) -> shared_ptr & {
 
 template <class T>
 auto shared_ptr<T>::operator=(shared_ptr &&r) noexcept -> shared_ptr & {
+  static_assert(std::is_move_constructible_v<T>, "not move assignable");
   if (r == *this) return *this;
   reset();
   _counter = r.counter;
